@@ -34,7 +34,7 @@ export default function FundProject({ projectAddress, refresh }) {
     await token.approve(projectAddress, bnAmount);
     setAllowance(bnAmount);
     if (refresh) refresh();
-    alert('Approved ' + amount + ' FND');
+    alert(`Approved ${amount} FND`);
   };
 
   const handleFund = async () => {
@@ -46,7 +46,7 @@ export default function FundProject({ projectAddress, refresh }) {
     try {
       const tx = await project.pledge(bnAmount, { gasLimit: 500000 });
       await tx.wait();
-      alert('Pledged ' + amount + ' FND');
+      alert(`Pledged ${amount} FND`);
       if (refresh) refresh();
     } catch (err) {
       console.error(err);
@@ -55,21 +55,23 @@ export default function FundProject({ projectAddress, refresh }) {
   };
 
   return (
-    <div className="mt-2">
+    <div className="actions">
       <input
+        type="text"
         value={amount}
         onChange={e => setAmount(e.target.value)}
-        placeholder="Amount to fund"
-        className="p-1 border rounded w-1/2 mr-2"
+        placeholder="Amount"
+        className="input"
       />
-      <button onClick={handleApprove} className="px-2 py-1 bg-yellow-500 text-white rounded mr-2">
+      <button onClick={handleApprove} className="button button-green">
         Approve
       </button>
-      <button onClick={handleFund} className="px-2 py-1 bg-green-500 text-white rounded">
+      <button onClick={handleFund} className="button button-primary">
         Fund
       </button>
-      <div className="mt-1 text-sm">
-        Balance: {FND_ADDRESS && ethers.utils.formatEther(balance)} FND | Allowance: {ethers.utils.formatEther(allowance)} FND
+      <div className="mt-1" style={{ fontSize: '0.9rem' }}>
+        Balance: {FND_ADDRESS && ethers.utils.formatEther(balance)} FND
+        {' '}| Allowance: {ethers.utils.formatEther(allowance)} FND
       </div>
     </div>
   );

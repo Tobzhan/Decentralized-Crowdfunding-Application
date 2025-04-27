@@ -8,7 +8,6 @@ contract CrowdProject {
     struct RewardTier {
         uint96 threshold;
         string uri;
-        bool claimed;
     }
 
     struct ProjectConfig {
@@ -23,26 +22,20 @@ contract CrowdProject {
     address public immutable creator;
     IERC20 public immutable fundingToken;
     RewardNFT public immutable rewardNFT;
-    bool public alive = true;
     bool public fundsWithdrawn;
     uint256 public totalPledged;
     mapping(address => uint256) public pledges;
+    mapping(address => mapping(uint256 => bool)) public claimedTier;
 
     event Pledged(address indexed backer, uint256 amount);
     event FundsWithdrawn(uint256 amount);
     event RefundClaimed(address indexed backer, uint256 amount);
 
-    /**
-     * @param token Address of ERC20 token used for funding
-     * @param nft Address of RewardNFT contract
-     * @param config Struct with project name, description, goal and deadline
-     * @param uris Array of URIs for each reward tier
-     * @param thresholds Array of funding thresholds for each reward tier
-     */
     constructor(
         address token,
         address nft,
         ProjectConfig memory config,
+        address projectCreator,
         string[] memory uris,
         uint256[] memory thresholds
     ) {
@@ -53,27 +46,23 @@ contract CrowdProject {
         _config = config;
         fundingToken = IERC20(token);
         rewardNFT = RewardNFT(nft);
-        creator = msg.sender;
+        creator = projectCreator;
 
         for (uint i = 0; i < thresholds.length; i++) {
             rewardTiers.push(
                 RewardTier({
                     threshold: uint96(thresholds[i]),
-                    uri: uris[i],
-                    claimed: false
+                    uri: uris[i]
                 })
             );
         }
     }
 
     modifier onlyActive() {
-        require(alive, "Project inactive");
+        require(!fundsWithdrawn && block.timestamp < _config.deadline, "Project inactive");
         _;
     }
 
-    /**
-     * @notice Pledge tokens to the project and mint any new reward NFTs
-     */
     function pledge(uint256 amount) external onlyActive {
         require(block.timestamp < _config.deadline, "Funding ended");
 
@@ -88,25 +77,20 @@ contract CrowdProject {
     function _processRewards(address backer) internal {
         uint256 total = pledges[backer];
         for (uint i = 0; i < rewardTiers.length; i++) {
-            RewardTier storage tier = rewardTiers[i];
-            if (!tier.claimed && total >= tier.threshold) {
-                rewardNFT.mint(backer, tier.uri);
-                tier.claimed = true;
+            if (!claimedTier[backer][i] && total >= rewardTiers[i].threshold) {
+                rewardNFT.mint(backer, rewardTiers[i].uri);
+                claimedTier[backer][i] = true;
             }
         }
     }
 
-    /**
-     * @notice Withdraw funds if goal met and deadline passed
-     */
-    function withdrawFunds() external onlyActive {
+    function withdrawFunds() external {
         require(msg.sender == creator, "Unauthorized");
         require(block.timestamp >= _config.deadline, "Ongoing");
         require(totalPledged >= _config.fundingGoal, "Goal not met");
         require(!fundsWithdrawn, "Already withdrawn");
 
         fundsWithdrawn = true;
-        alive = false;
         uint256 amount = totalPledged;
         totalPledged = 0;
 
@@ -114,10 +98,7 @@ contract CrowdProject {
         emit FundsWithdrawn(amount);
     }
 
-    /**
-     * @notice Claim refund if goal not met and deadline passed
-     */
-    function claimRefund() external onlyActive {
+    function claimRefund() external {
         require(block.timestamp >= _config.deadline, "Funding ongoing");
         require(totalPledged < _config.fundingGoal, "Goal met");
 
@@ -125,13 +106,11 @@ contract CrowdProject {
         require(amount > 0, "Nothing to refund");
 
         pledges[msg.sender] = 0;
-        alive = false;
 
         fundingToken.transfer(msg.sender, amount);
         emit RefundClaimed(msg.sender, amount);
     }
 
-    // View helpers
     function getProjectName() external view returns (string memory) {
         return _config.name;
     }
@@ -165,6 +144,6 @@ contract CrowdProject {
     }
 
     function isActive() external view returns (bool) {
-        return alive;
+        return (!fundsWithdrawn && block.timestamp < _config.deadline);
     }
 }

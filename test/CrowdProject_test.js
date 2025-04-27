@@ -33,6 +33,7 @@ describe("CrowdProject", function() {
       await fnd.getAddress(),
       await rewardNFT.getAddress(),
       config,
+      owner.address,
       uris,
       thresholds
     );
@@ -41,6 +42,11 @@ describe("CrowdProject", function() {
     await rewardNFT.connect(owner).addMinter(await project.getAddress());
     await fnd.transfer(backer1.address, ethers.parseEther("100"));
     await fnd.transfer(backer2.address, ethers.parseEther("100"));
+  });
+  
+  it("sets the correct creator on deployment", async function() {
+    // owner was passed in as projectCreator
+    expect(await project.creator()).to.equal(owner.address);
   });
 
   it("rejects pledge without approval (allowance test)", async function() {
@@ -68,7 +74,7 @@ describe("CrowdProject", function() {
     await fnd.connect(backer1).approve(await project.getAddress(), ethers.parseEther("10"));
     await expect(
       project.connect(backer1).pledge(ethers.parseEther("10"))
-    ).to.be.revertedWith("Funding ended");
+    ).to.be.revertedWith("Project inactive");
   });
 
   it("does not mint same reward twice", async function() {

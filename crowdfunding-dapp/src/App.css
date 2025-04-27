@@ -1,38 +1,125 @@
-.App {
-  text-align: center;
+/* App.css */
+
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f3f4f6; /* light gray */
+  color: #374151; /* gray-700 */
+}
+a {
+  text-decoration: none;
+}
+ul {
+  list-style: none;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Container */
+.container {
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Header */
+.header {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+}
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937; /* gray-800 */
 }
 
-.App-link {
-  color: #61dafb;
+/* Navigation */
+.nav {
+  display: flex;
+  gap: 1.5rem;
+}
+.nav a {
+  font-weight: 500;
+  color: #4b5563; /* gray-600 */
+  transition: color 0.2s ease;
+}
+.nav a:hover {
+  color: #2563eb; /* blue-600 */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Buttons */
+.button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+.button-primary {
+  background-color: #3b82f6; /* blue-500 */
+  color: #ffffff;
+}
+.button-primary:hover {
+  background-color: #2563eb; /* blue-600 */
+}
+.button-green {
+  background-color: #10b981; /* green-500 */
+  color: #ffffff;
+}
+.button-green:hover {
+  background-color: #059669; /* green-600 */
+}
+.button-red {
+  background-color: #ef4444; /* red-500 */
+  color: #ffffff;
+}
+.button-red:hover {
+  background-color: #dc2626; /* red-600 */
+}
+
+/* Inputs & Textarea */
+.input, .textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+.input:focus, .textarea:focus {
+  outline: none;
+  border-color: #3b82f6; /* blue-500 */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+/* Project Card */
+.project-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.project-card h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.project-card p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+.project-card .actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
 }

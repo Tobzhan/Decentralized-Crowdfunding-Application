@@ -59,6 +59,7 @@ contract CrowdFactory {
             tokenContract,
             nftContract,
             config,
+            msg.sender, 
             rewardURIs,
             rewardThresholds
         );

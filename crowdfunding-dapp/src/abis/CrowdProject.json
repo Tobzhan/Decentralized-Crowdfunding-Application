@@ -39,6 +39,11 @@
 				"type": "tuple"
 			},
 			{
+				"internalType": "address",
+				"name": "projectCreator",
+				"type": "address"
+			},
+			{
 				"internalType": "string[]",
 				"name": "uris",
 				"type": "string[]"
@@ -105,7 +110,25 @@
 	},
 	{
 		"inputs": [],
-		"name": "alive",
+		"name": "claimRefund",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "claimedTier",
 		"outputs": [
 			{
 				"internalType": "bool",
@@ -114,13 +137,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "claimRefund",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -240,11 +256,6 @@
 						"internalType": "string",
 						"name": "uri",
 						"type": "string"
-					},
-					{
-						"internalType": "bool",
-						"name": "claimed",
-						"type": "bool"
 					}
 				],
 				"internalType": "struct CrowdProject.RewardTier[]",
@@ -332,11 +343,6 @@
 				"internalType": "string",
 				"name": "uri",
 				"type": "string"
-			},
-			{
-				"internalType": "bool",
-				"name": "claimed",
-				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
